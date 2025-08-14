@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-import { onAuthStateChanged, signOut } from "firebase/auth";
+import { onAuthStateChanged } from "firebase/auth"; // signOut hata diya
 import { auth } from "../utils/firebase";
 import { motion } from "framer-motion";
-import { FaMoon, FaSun } from "react-icons/fa"; // Theme icons
+import { FaMoon, FaSun } from "react-icons/fa";
 
 // Load Montserrat font
-import "@fontsource/montserrat"; // npm install @fontsource/montserrat
+import "@fontsource/montserrat";
 
 export default function Header() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
 
-  // Dark mode state (load from localStorage)
+  // Dark mode state
   const [darkMode, setDarkMode] = useState(() => {
     return localStorage.getItem("theme") === "dark";
   });
@@ -35,19 +35,6 @@ export default function Header() {
       localStorage.setItem("theme", "light");
     }
   }, [darkMode]);
-
-  // Logout function
-  const handleLogout = async () => {
-    try {
-      await signOut(auth);
-      localStorage.removeItem("token");
-      localStorage.removeItem("user");
-      navigate("/login", { replace: true });
-    } catch (error) {
-      console.error("Logout error:", error);
-      alert("Failed to log out. Please try again.");
-    }
-  };
 
   return (
     <header className="bg-gradient-to-r from-indigo-900 via-purple-900 to-black p-4 shadow-lg">
@@ -113,17 +100,9 @@ export default function Header() {
               </NavLink>
             </>
           )}
-
-          {user && (
-            <button
-              onClick={handleLogout}
-              className="px-3 py-1 rounded text-white hover:bg-red-500 transition-colors"
-            >
-              Logout
-            </button>
-          )}
         </nav>
       </div>
     </header>
   );
 }
+
