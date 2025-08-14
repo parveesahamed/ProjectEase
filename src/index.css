@@ -1,0 +1,59 @@
+/* index.css */
+
+/* Import fonts */
+@import "@fontsource/montserrat";
+@import "@fontsource/roboto";
+
+/* TailwindCSS base styles */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* MetaMask style navbar */
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #1e1e1e;
+  padding: 0.75rem 1.5rem;
+  font-family: 'Inter', sans-serif;
+}
+
+.navbar-logo {
+  font-size: 1.4rem;
+  font-weight: 600;
+  color: white;
+}
+
+.navbar-links {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  font-size: 0.95rem;
+  font-weight: 500;
+  color: white;
+}
+
+.navbar-links span {
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.navbar-links span:hover {
+  color: #f6851b; /* MetaMask orange hover */
+}
+
+.logout-btn {
+  background: #f6851b;
+  border: none;
+  padding: 0.4rem 0.9rem;
+  border-radius: 6px;
+  color: white;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.logout-btn:hover {
+  background: #e2761b;
+}
