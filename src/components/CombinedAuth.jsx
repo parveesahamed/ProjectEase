@@ -38,9 +38,32 @@ export default function CombinedAuth() {
         navigate("/dashboard", { replace: true });
     };
 
+    // === THE FIX IS HERE: Improved Error Handling ===
     const handleAuthError = (error) => {
-        setErr(error?.message || "Something went wrong.");
+        let friendlyMessage = "An unexpected error occurred. Please try again.";
+        switch (error.code) {
+            case 'auth/invalid-credential':
+                friendlyMessage = "Incorrect email or password. Please try again.";
+                break;
+            case 'auth/email-already-in-use':
+                friendlyMessage = "This email address is already registered.";
+                break;
+            case 'auth/weak-password':
+                friendlyMessage = "Password should be at least 6 characters long.";
+                break;
+            case 'auth/invalid-email':
+                friendlyMessage = "Please enter a valid email address.";
+                break;
+            case 'auth/user-not-found':
+                 friendlyMessage = "No account found with this email.";
+                 break;
+            case 'auth/wrong-password':
+                 friendlyMessage = "Incorrect password. Please try again.";
+                 break;
+        }
+        setErr(friendlyMessage);
     };
+    // === PROBLEM SOLVED ===
 
     const handleSignInSubmit = async (e) => {
         e.preventDefault();
@@ -95,15 +118,11 @@ export default function CombinedAuth() {
     const handleSignInClick = () => { setErr(""); setIsSignUpActive(false); };
 
     return (
-        // Main wrapper for the entire page
         <div className="flex items-center justify-center min-h-screen bg-[#111827] p-4">
             
-            {/* ====================================================================== */}
-            {/* MOBILE VIEW (Shows one form at a time) */}
-            {/* ====================================================================== */}
+            {/* MOBILE VIEW */}
             <div className="w-full max-w-sm md:hidden">
                 {isSignUpActive ? (
-                    // --- Mobile Sign Up Form ---
                     <div className="bg-[#1f2937] p-8 rounded-2xl shadow-lg">
                         <form onSubmit={handleSignUpSubmit} className="flex flex-col items-center text-center">
                             <h1 className="font-bold text-3xl mb-2 text-white">Create Account</h1>
@@ -132,7 +151,6 @@ export default function CombinedAuth() {
                         </form>
                     </div>
                 ) : (
-                    // --- Mobile Sign In Form ---
                     <div className="bg-[#1f2937] p-8 rounded-2xl shadow-lg">
                         <form onSubmit={handleSignInSubmit} className="flex flex-col items-center text-center">
                             <h1 className="font-bold text-3xl mb-4 text-white">Sign In</h1>
@@ -158,9 +176,7 @@ export default function CombinedAuth() {
                 )}
             </div>
 
-            {/* ====================================================================== */}
-            {/* DESKTOP VIEW (Your original code, but hidden on small screens) */}
-            {/* ====================================================================== */}
+            {/* DESKTOP VIEW */}
             <div className={`relative overflow-hidden w-full max-w-4xl min-h-[620px] rounded-lg bg-[#1f2937] shadow-lg hidden md:block`}>
                 {/* Sign Up Form */}
                 <div className={`absolute top-0 h-full left-0 w-1/2 opacity-0 z-10 transition-all duration-600 ease-in-out ${isSignUpActive ? 'transform translate-x-full opacity-100 z-50' : ''}`}>
@@ -185,14 +201,6 @@ export default function CombinedAuth() {
                         {err && <p className="text-red-400 text-sm mt-2 h-5">{err}</p>}
                         <button type="submit" disabled={loading} className="rounded-full border border-transparent bg-gradient-to-r from-blue-600 to-purple-600 text-white text-sm font-bold py-3 px-12 tracking-wider uppercase mt-4 transform transition-transform duration-75 ease-in hover:scale-105 focus:outline-none disabled:opacity-70 disabled:cursor-not-allowed">
                             {loading ? 'Creating...' : 'Sign Up'}
-                        </button>
-                        <div className="relative flex items-center justify-center my-3 w-full">
-                           <div className="border-t border-gray-500 flex-grow"></div>
-                           <span className="px-2 text-gray-400 text-sm">OR</span>
-                           <div className="border-t border-gray-500 flex-grow"></div>
-                        </div>
-                        <button type="button" onClick={handleGoogleLogin} disabled={loading} className="w-full flex items-center justify-center gap-2 bg-white text-black py-2.5 rounded-lg hover:bg-gray-200 transition font-semibold disabled:opacity-70 disabled:cursor-not-allowed">
-                            <GoogleIcon /> Continue with Google
                         </button>
                     </form>
                 </div>
@@ -222,14 +230,14 @@ export default function CombinedAuth() {
                 {/* Overlay Panels */}
                 <div className={`absolute top-0 left-1/2 w-1/2 h-full overflow-hidden z-50 transition-transform duration-600 ease-in-out ${isSignUpActive ? 'transform -translate-x-full' : ''}`}>
                     <div className={`bg-gradient-to-r from-blue-600 to-purple-600 relative -left-full h-full w-[200%] transform transition-transform duration-600 ease-in-out text-white ${isSignUpActive ? 'transform translate-x-1/2' : 'transform translate-x-0'}`}>
-                        <div className={`absolute flex items-center justify-center flex-col px-10 text-center top-0 h-full w-1/2 transform transition-transform duration-600 ease-in-out ${isSignUpActive ? 'transform translate-x-0' : 'transform -translate-x-1/5'}`}>
+                        <div className={`absolute flex items-center justify-center flex-col px-10 text-center top-0 h-full w-1/2 transform transition-transform duration-600 ease-in-out`}>
                             <h1 className="font-bold text-3xl">Welcome Back!</h1>
                             <p className="text-md font-thin leading-snug mt-5">To keep connected with us please login with your personal info</p>
                             <button className="rounded-full border border-white bg-transparent text-white text-sm font-bold py-3 px-12 tracking-wider uppercase mt-4 transform transition-transform duration-75 ease-in hover:scale-105 focus:outline-none" onClick={handleSignInClick}>
                                 Sign In
                             </button>
                         </div>
-                        <div className={`absolute flex items-center justify-center flex-col px-10 text-center top-0 right-0 h-full w-1/2 transform transition-transform duration-600 ease-in-out ${isSignUpActive ? 'transform translate-x-1/5' : 'transform translate-x-0'}`}>
+                        <div className={`absolute flex items-center justify-center flex-col px-10 text-center top-0 right-0 h-full w-1/2 transform transition-transform duration-600 ease-in-out`}>
                             <h1 className="font-bold text-3xl">Hello, Friend!</h1>
                             <p className="text-md font-thin leading-snug mt-5">Enter your personal details and start your journey with us</p>
                             <button className="rounded-full border border-white bg-transparent text-white text-sm font-bold py-3 px-12 tracking-wider uppercase mt-4 transform transition-transform duration-75 ease-in hover:scale-105 focus:outline-none" onClick={handleSignUpClick}>
@@ -242,4 +250,5 @@ export default function CombinedAuth() {
         </div>
     );
 };
+
 
